@@ -1,6 +1,10 @@
 <template>
   <div class="app">
     <header class="header">
+      <button class="cart-icon" aria-label="Open cart" @click="cartOpen = true">
+        🛒
+        <span v-if="count > 0" class="cart-badge">{{ count }}</span>
+      </button>
       <h1>🎵 Album Collection</h1>
       <p>Discover amazing music albums</p>
     </header>
@@ -17,13 +21,15 @@
       </div>
 
       <div v-else class="albums-grid">
-        <AlbumCard 
-          v-for="album in albums" 
-          :key="album.id" 
-          :album="album" 
+        <AlbumCard
+          v-for="album in albums"
+          :key="album.id"
+          :album="album"
         />
       </div>
     </main>
+
+    <CartPanel :open="cartOpen" @close="cartOpen = false" />
   </div>
 </template>
 
@@ -31,11 +37,16 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import AlbumCard from './components/AlbumCard.vue'
+import CartPanel from './components/CartPanel.vue'
 import type { Album } from './types/album'
+import { useCart } from './composables/useCart'
 
 const albums = ref<Album[]>([])
 const loading = ref<boolean>(true)
 const error = ref<string | null>(null)
+const cartOpen = ref<boolean>(false)
+
+const { count } = useCart()
 
 const fetchAlbums = async (): Promise<void> => {
   try {
@@ -63,9 +74,48 @@ onMounted(() => {
 }
 
 .header {
+  position: relative;
   text-align: center;
   margin-bottom: 3rem;
   color: white;
+}
+
+.cart-icon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.cart-icon:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #c0392b;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
 }
 
 .header h1 {
@@ -146,11 +196,11 @@ onMounted(() => {
   .app {
     padding: 1rem;
   }
-  
+
   .header h1 {
     font-size: 2rem;
   }
-  
+
   .albums-grid {
     grid-template-columns: 1fr;
     gap: 1rem;

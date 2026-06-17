@@ -8,9 +8,14 @@ namespace UnsecureApp.Controllers
     public class MyController
     {
 
+        protected virtual FileStream OpenFileStream(string userInput)
+        {
+            return File.Open(userInput, FileMode.Open);
+        }
+
         public string ReadFile(string userInput)
         {
-            using (FileStream fs = File.Open(userInput, FileMode.Open))
+            using (FileStream fs = OpenFileStream(userInput))
             {
                 byte[] b = new byte[1024];
                 UTF8Encoding temp = new UTF8Encoding(true);
@@ -35,7 +40,7 @@ namespace UnsecureApp.Controllers
                 };
 
                 SqlDataReader reader = sqlCommand.ExecuteReader();
-                return reader.GetInt32(0); 
+                return reader.GetInt32(0);
             }
         }
 
@@ -50,7 +55,7 @@ namespace UnsecureApp.Controllers
             {
                 Console.WriteLine(e.ToString());
             }
-        
+
         }
 
         private string connectionString = "";
