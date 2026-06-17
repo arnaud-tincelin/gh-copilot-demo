@@ -1,8 +1,16 @@
 <template>
   <div class="app">
     <header class="header">
-      <h1>🎵 Album Collection</h1>
-      <p>Discover amazing music albums</p>
+      <div class="header-content">
+        <div>
+          <h1>🎵 Album Collection</h1>
+          <p>Discover amazing music albums</p>
+        </div>
+        <button class="cart-btn" aria-label="Open cart" @click="cartOpen = true">
+          🛒
+          <span v-if="count > 0" class="cart-badge">{{ count }}</span>
+        </button>
+      </div>
     </header>
 
     <main class="main">
@@ -24,6 +32,8 @@
         />
       </div>
     </main>
+
+    <CartPanel :is-open="cartOpen" @close="cartOpen = false" />
   </div>
 </template>
 
@@ -31,11 +41,16 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import AlbumCard from './components/AlbumCard.vue'
+import CartPanel from './components/CartPanel.vue'
 import type { Album } from './types/album'
+import { useCart } from './composables/useCart'
 
 const albums = ref<Album[]>([])
 const loading = ref<boolean>(true)
 const error = ref<string | null>(null)
+const cartOpen = ref<boolean>(false)
+
+const { count } = useCart()
 
 const fetchAlbums = async (): Promise<void> => {
   try {
@@ -68,6 +83,14 @@ onMounted(() => {
   color: white;
 }
 
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
 .header h1 {
   font-size: 3rem;
   margin-bottom: 0.5rem;
@@ -77,6 +100,47 @@ onMounted(() => {
 .header p {
   font-size: 1.2rem;
   opacity: 0.9;
+  margin: 0;
+}
+
+.cart-btn {
+  position: relative;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  color: white;
+  font-size: 1.75rem;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.cart-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(1.05);
+}
+
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #e74c3c;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  line-height: 1;
 }
 
 .main {
