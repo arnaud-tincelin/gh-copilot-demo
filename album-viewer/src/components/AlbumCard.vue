@@ -1,8 +1,8 @@
 <template>
   <div class="album-card">
     <div class="album-image">
-      <img 
-        :src="album.image_url" 
+      <img
+        :src="album.image_url"
         :alt="album.title"
         @error="handleImageError"
         loading="lazy"
@@ -11,7 +11,7 @@
         <div class="play-button">▶</div>
       </div>
     </div>
-    
+
     <div class="album-info">
       <h3 class="album-title">{{ album.title }}</h3>
       <p class="album-artist">{{ album.artist }}</p>
@@ -19,9 +19,9 @@
         <span class="price">${{ album.price.toFixed(2) }}</span>
       </div>
     </div>
-    
+
     <div class="album-actions">
-      <button class="btn btn-primary">Add to Cart</button>
+      <button class="btn btn-primary" @click="addToCart(album)">Add to Cart</button>
       <button class="btn btn-secondary">Preview</button>
     </div>
   </div>
@@ -29,12 +29,15 @@
 
 <script setup lang="ts">
 import type { Album } from '../types/album'
+import { useCart } from '../composables/useCart'
 
 interface Props {
   album: Album
 }
 
 defineProps<Props>()
+
+const { addToCart } = useCart()
 
 const handleImageError = (event: Event): void => {
   const target = event.target as HTMLImageElement
@@ -183,12 +186,12 @@ const handleImageError = (event: Event): void => {
   .album-info {
     padding: 1rem;
   }
-  
+
   .album-actions {
     padding: 0 1rem 1rem;
     flex-direction: column;
   }
-  
+
   .btn {
     width: 100%;
   }

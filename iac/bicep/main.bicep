@@ -15,7 +15,7 @@ param apiImage string
 param viewerImage string
 
 
-// Log analytics and App Insights for visibility 
+// Log analytics and App Insights for visibility
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-03-01-preview' = {
   name: logAnalyticsWorkspaceName
   location: location
@@ -40,7 +40,7 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
   }
 }
 
-// Storage Account to act as state store 
+// Storage Account to act as state store
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-06-01' = {
   name: storageAccountName
   location: location
@@ -60,7 +60,7 @@ resource blobContainer 'Microsoft.Storage/storageAccounts/blobServices/container
   name: blobContainerName
 }
 
-// Container Apps environment 
+// Container Apps environment
 resource containerAppsEnv 'Microsoft.App/managedEnvironments@2022-03-01' = {
   name: containerAppsEnvName
   location: location
@@ -121,6 +121,31 @@ module albumServiceCapp 'modules/container-app.bicep' = {
     containerImage: apiImage
     httpPort: 80
     registryServer: registryName
+  }
+}
+
+// Container Registry
+resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-09-01' = {
+  name: registryName
+  location: location
+  sku: {
+    name: 'Basic'
+  }
+  properties: {
+    adminUserEnabled: true
+  }
+}
+
+// Azure Open AI resource
+resource azureOpenAI 'Microsoft.CognitiveServices/accounts@2022-12-01' = {
+  name: 'openai-${uniqueSuffix}'
+  location: location
+  kind: 'OpenAI'
+  sku: {
+    name: 'S0'
+  }
+  properties: {
+    publicNetworkAccess: 'Enabled'
   }
 }
 
