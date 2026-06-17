@@ -21,7 +21,7 @@
     </div>
     
     <div class="album-actions">
-      <button class="btn btn-primary">Add to Cart</button>
+      <button class="btn btn-primary" @click="addToCart(album)">Add to Cart</button>
       <button class="btn btn-secondary">Preview</button>
     </div>
   </div>
@@ -29,12 +29,15 @@
 
 <script setup lang="ts">
 import type { Album } from '../types/album'
+import { useCart } from '../composables/useCart'
 
 interface Props {
   album: Album
 }
 
 defineProps<Props>()
+
+const { addToCart } = useCart()
 
 const handleImageError = (event: Event): void => {
   const target = event.target as HTMLImageElement
